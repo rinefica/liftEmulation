@@ -1,22 +1,20 @@
 package liftEmu.models;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.text.Text;
-import liftEmu.models.calls.InnerCall;
+import liftEmu.models.calls.Call;
 
 public class Lift {
-    public final int COUNT_FLOORS = 7;
-    public final int TIME_ONE_FLOOR_SEC = 10;
-    public final int TIME_START_STOP_SEC = 2;
-//    public final int TIME_DELAY_SEC = 5;
+    public static final int COUNT_FLOORS = 7;
+    public static final int TIME_ONE_FLOOR_SEC = 1;
+    public static final int TIME_START_STOP_SEC = 2;
+//    public static final int TIME_DELAY_SEC = 5;
 
 
     private IntegerProperty currentFloor = new SimpleIntegerProperty(1);
     private StringProperty currentDirection =
-        new SimpleStringProperty(InnerCall.Direction.UP.toString());
+        new SimpleStringProperty(Call.DIRECTION.UP.toString());
 
 
     public int getCurrentFloor() {
@@ -52,7 +50,7 @@ public class Lift {
     }
 
     public ObservableList getListDirections() {
-        return FXCollections.observableArrayList(InnerCall.Direction.values());
+        return FXCollections.observableArrayList(Call.DIRECTION.values());
     }
 
     private static Lift lift;
