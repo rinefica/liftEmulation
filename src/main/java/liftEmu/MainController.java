@@ -3,13 +3,13 @@ package liftEmu;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
 import liftEmu.models.Lift;
 import liftEmu.models.calls.Call;
 import liftEmu.models.calls.IOrderCalls;
 import liftEmu.models.calls.OrderCalls;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -28,9 +28,12 @@ public class MainController {
     public Button btnOuterCall;
     @FXML
     public Button btnInnerCall;
+    @FXML
+    public TextArea textOrderStop;
 
     private Lift lift = Lift.getInstance();
-    private IOrderCalls orders = new OrderCalls();
+    private IOrderCalls calls = new OrderCalls();
+    private static Timer timer = new Timer();
 
     @FXML
     void initialize() {
@@ -39,7 +42,7 @@ public class MainController {
         outerCallDir.setItems(lift.getListDirections());
 
         btnOuterCall.setOnAction(event ->
-            orders.addCall(new Call(Call.TYPE.OUTER,
+            calls.addCall(new Call(Call.TYPE.OUTER,
                 Call.DIRECTION.valueOf(outerCallDir.getValue().toString()),
                 Integer.valueOf(outerCallFloor.getValue().toString()))));
 
@@ -49,29 +52,38 @@ public class MainController {
             Call.DIRECTION dir = lift.getCurrentFloor() - selectedFloor > 0 ?
                 Call.DIRECTION.DOWN : Call.DIRECTION.UP;
 
-            orders.addCall(new Call(Call.TYPE.INNER, dir, selectedFloor));
+            calls.addCall(new Call(Call.TYPE.INNER, dir, selectedFloor));
         });
 
         lift.currentFloorProperty().addListener((event) ->
             textCurFloor.setText(String.valueOf(lift.getCurrentFloor())));
         textCurDir.textProperty().bind(lift.currentDirectionProperty());
 
+
+        setTimer();
+
     }
 
     private void setTimer() {
-        Timer timer = new Timer();
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("cur time: " + System.currentTimeMillis() / 1000);
-                if (System.currentTimeMillis() / 1000 == orders.getTimeNextStop()) {
-                    System.out.println("YYYY time:" + orders.getTimeNextStop());
-                    lift.setCurrentFloor(orders.getNextStop());
+//                System.out.println("cur time: " + System.currentTimeMillis() / 1000);
+                textOrderStop.setText(calls.toString());
+                if (System.currentTimeMillis() / 1000 == calls.getTimeNextStop()) {
+//                    System.out.println("YYYY time:" + calls.getTimeNextStop());
+                    lift.setCurrentFloor(calls.getNextStop());
                 }
             }
         };
 
         timer.schedule(task, 1000, 1000);
+    }
+
+
+
+    public static void cancelTimer(){
+        timer.cancel();
     }
 
 

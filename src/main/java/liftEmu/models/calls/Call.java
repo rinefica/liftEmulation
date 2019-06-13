@@ -11,10 +11,10 @@ public class Call {
         OUTER
     }
 
-    private TYPE type;
-    private DIRECTION dir;
+    protected TYPE type;
+    protected DIRECTION dir;
 
-    private int floor;
+    protected int floor;
 
     public int getFloor() {
         return floor;

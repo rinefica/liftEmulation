@@ -17,6 +17,10 @@ public class MainApp extends Application {
         AnchorPane page = loader.load();
         Scene scene = new Scene(page);
 
+        stage.setOnCloseRequest(event -> {
+            MainController.cancelTimer();
+        });
+
         stage.setTitle("liftEmulation");
         stage.setScene(scene);
         stage.show();
