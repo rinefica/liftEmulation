@@ -3,55 +3,55 @@ package liftEmu.models.calls;
 import liftEmu.models.Lift;
 
 import java.util.LinkedList;
-import java.util.Queue;
 
 public class OrderCalls implements IOrderCalls{
 
-    LinkedList<Stop> order = new LinkedList<>();
+    private volatile LinkedList<Call> order = new LinkedList<>();
 
     @Override
     public long getTimeNextStop() {
-        if (order.size() == 0) {
+        if (order.isEmpty()) {
             return 0;
         }
 
-        return order.peek().getTime();
+        return 0;
     }
 
     @Override
     public int getNextStop() {
-        if (order.size() == 0) {
+        if (order.isEmpty()) {
             return 0;
         }
 
-        return order.poll().getFloor();
+        return order.pollFirst().getFloor();
     }
+
 
     @Override
     public void addCall(Call call) {
-        if (order.size() == 0) {
-            long currentTime = System.currentTimeMillis() / 1000;
-            long time = currentTime +
-                Lift.TIME_ONE_FLOOR_SEC * Math.abs(getCurrentFloor() - call.getFloor());
-            order.add(new Stop(call, time));
+        int iToInsert = 0;
+        if (!order.isEmpty()) {
 
-//            System.out.println("now: " + currentTime + " add " + call.getFloor() + " time: " + time );
-        }
-        if (call.type == Call.TYPE.INNER) {
-            int curIndex = -1;
-
-            for (int i = 0; i < order.size(); i++) {
-                if (order.get(i).type == Call.TYPE.OUTER) {
-                    curIndex = i;
-                    break;
+            if (call.getType() == Call.TYPE.OUTER) {
+                Call.DIRECTION dir = call.getDir() == Call.DIRECTION.UP ? Call.DIRECTION.DOWN : Call.DIRECTION.UP;
+                while((iToInsert < order.size()) && (order.get(iToInsert).getDir() == dir)) {
+                    iToInsert++;
                 }
             }
 
-            if (curIndex == -1) {
-                order.addLast(new Stop(call, 0));
-            } else {
-                order.add(curIndex, new Stop(call, 0));
+            Call.DIRECTION curDir = call.getDir();
+            int distance = Math.abs(getCurrentFloor() - call.getFloor());
+
+            while ((iToInsert < order.size()) && (order.get(iToInsert).getDir() == curDir) &&
+                (Math.abs(getCurrentFloor() - order.get(iToInsert).getFloor()) < distance)) {
+                iToInsert++;
             }
+        }
+
+        if (iToInsert >= order.size()) {
+            order.addLast(call);
+        } else {
+            order.add(iToInsert, call);
         }
     }
 
@@ -62,35 +62,9 @@ public class OrderCalls implements IOrderCalls{
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        for (Stop s : order){
+        for (Call s : order){
             stringBuilder.append(s);
         }
         return stringBuilder.toString();
-    }
-
-    public class Stop extends Call {
-        private long time;
-
-        public Stop(Call call, long time) {
-            super(call.type, call.dir, call.floor);
-            this.time = time;
-        }
-
-        public long getTime() {
-            return time;
-        }
-
-        public void setTime(long time) {
-            this.time = time;
-        }
-
-        @Override
-        public String toString() {
-            return "Stop: " +
-                "in time: " + time +
-                "\t" + type +
-                "\t" + dir +
-                "\tfloor: " + floor + '\n';
-        }
     }
 }

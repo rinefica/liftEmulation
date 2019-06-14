@@ -30,6 +30,8 @@ public class MainController {
     public Button btnInnerCall;
     @FXML
     public TextArea textOrderStop;
+    @FXML
+    public Text textCurState;
 
     private Lift lift = Lift.getInstance();
     private IOrderCalls calls = new OrderCalls();
@@ -42,26 +44,32 @@ public class MainController {
         outerCallDir.setItems(lift.getListDirections());
 
         btnOuterCall.setOnAction(event ->
-            calls.addCall(new Call(Call.TYPE.OUTER,
+            doCall(Call.TYPE.OUTER,
                 Call.DIRECTION.valueOf(outerCallDir.getValue().toString()),
-                Integer.valueOf(outerCallFloor.getValue().toString()))));
+                Integer.valueOf(outerCallFloor.getValue().toString())));
 
         btnInnerCall.setOnAction(event -> {
-            int selectedFloor = Integer.valueOf(outerCallFloor.getValue().toString());
+            int selectedFloor = Integer.valueOf(innerCallFloor.getValue().toString());
 
             Call.DIRECTION dir = lift.getCurrentFloor() - selectedFloor > 0 ?
                 Call.DIRECTION.DOWN : Call.DIRECTION.UP;
 
-            calls.addCall(new Call(Call.TYPE.INNER, dir, selectedFloor));
+            doCall(Call.TYPE.INNER, dir, selectedFloor);
         });
 
         lift.currentFloorProperty().addListener((event) ->
             textCurFloor.setText(String.valueOf(lift.getCurrentFloor())));
         textCurDir.textProperty().bind(lift.currentDirectionProperty());
-
+        textCurState.textProperty().bind(lift.currentStateProperty());
 
         setTimer();
+    }
 
+    private void doCall(Call.TYPE type, Call.DIRECTION dir, int floor) {
+        calls.addCall(new Call(type, dir, floor));
+        if (lift.getCurrentState() == Lift.STATE.NONE) {
+            lift.setCurrentState(Lift.STATE.MOVIE);
+        }
     }
 
     private void setTimer() {
@@ -73,6 +81,7 @@ public class MainController {
                 if (System.currentTimeMillis() / 1000 == calls.getTimeNextStop()) {
 //                    System.out.println("YYYY time:" + calls.getTimeNextStop());
                     lift.setCurrentFloor(calls.getNextStop());
+                    lift.setCurrentState(Lift.STATE.STOP);
                 }
             }
         };

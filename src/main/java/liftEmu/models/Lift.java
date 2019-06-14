@@ -6,6 +6,14 @@ import javafx.collections.ObservableList;
 import liftEmu.models.calls.Call;
 
 public class Lift {
+
+    public enum STATE {
+        MOVIE,
+        START,
+        STOP,
+        NONE
+    }
+
     public static final int COUNT_FLOORS = 7;
     public static final int TIME_ONE_FLOOR_SEC = 1;
     public static final int TIME_START_STOP_SEC = 2;
@@ -15,6 +23,7 @@ public class Lift {
     private IntegerProperty currentFloor = new SimpleIntegerProperty(1);
     private StringProperty currentDirection =
         new SimpleStringProperty(Call.DIRECTION.UP.toString());
+    private StringProperty currentState = new SimpleStringProperty(STATE.NONE.toString());
 
 
     public int getCurrentFloor() {
@@ -29,8 +38,8 @@ public class Lift {
         this.currentFloor.set(currentFloor);
     }
 
-    public String getCurrentDirection() {
-        return currentDirection.get();
+    public Call.DIRECTION getCurrentDirection() {
+        return Call.DIRECTION.valueOf(currentDirection.get());
     }
 
     public StringProperty currentDirectionProperty() {
@@ -39,6 +48,18 @@ public class Lift {
 
     public void setCurrentDirection(String currentDirection) {
         this.currentDirection.set(currentDirection);
+    }
+
+    public STATE getCurrentState() {
+        return STATE.valueOf(currentState.get());
+    }
+
+    public StringProperty currentStateProperty() {
+        return currentState;
+    }
+
+    public void setCurrentState(STATE currentState) {
+        this.currentState.set(currentState.toString());
     }
 
     public ObservableList getListFloors() {

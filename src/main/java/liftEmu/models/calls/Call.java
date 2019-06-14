@@ -11,10 +11,10 @@ public class Call {
         OUTER
     }
 
-    protected TYPE type;
-    protected DIRECTION dir;
+    private TYPE type;
+    private DIRECTION dir;
 
-    protected int floor;
+    private int floor;
 
     public int getFloor() {
         return floor;
@@ -44,5 +44,14 @@ public class Call {
         this.type = type;
         this.dir = dir;
         this.floor = floor;
+    }
+
+    @Override
+    public String toString() {
+        return "Call: " +
+            "\t" + type +
+            "\t" + dir +
+            "\tfloor: " + floor +
+            '\n';
     }
 }

@@ -9,11 +9,11 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="liftEmu.MainController">
    <children>
       <Text layoutX="73.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lift at floor : " />
-      <Text fx:id="textCurFloor" layoutX="227.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
+      <Text fx:id="textCurFloor" layoutX="170.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1" />
       <Text layoutX="73.0" layoutY="107.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Call the lift:" />
       <ChoiceBox fx:id="outerCallFloor" layoutX="206.0" layoutY="89.0" prefHeight="26.0" prefWidth="42.0" />
-      <Text layoutX="286.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="direction:" />
-      <Text fx:id="textCurDir" layoutX="371.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UP" />
+      <Text layoutX="200.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="direction:" />
+      <Text fx:id="textCurDir" layoutX="275.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="UP" />
       <Text layoutX="286.0" layoutY="106.0" strokeType="OUTSIDE" strokeWidth="0.0" text="direction:" />
       <ChoiceBox fx:id="outerCallDir" layoutX="371.0" layoutY="88.0" prefHeight="26.0" prefWidth="75.0" />
       <Text layoutX="35.0" layoutY="167.0" strokeType="OUTSIDE" strokeWidth="0.0" text="In the lift - choose floor:" />
@@ -21,5 +21,7 @@
       <Button fx:id="btnOuterCall" layoutX="491.0" layoutY="88.0" mnemonicParsing="false" text="Call" />
       <Button fx:id="btnInnerCall" layoutX="491.0" layoutY="149.0" mnemonicParsing="false" text="Call" />
       <TextArea fx:id="textOrderStop" layoutX="35.0" layoutY="200.0" prefHeight="200.0" prefWidth="500.0" />
+      <Text layoutX="320.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="state:" />
+      <Text fx:id="textCurState" layoutX="371.0" layoutY="47.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
    </children>
 </AnchorPane>
