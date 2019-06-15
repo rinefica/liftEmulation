@@ -20,58 +20,6 @@ public class Lift implements IStateLift{
     private STATE curState = STATE.NONE;
     private StringProperty currentStateProperty = new SimpleStringProperty(curState.toString());
 
-    private long timeNextStop = 0;
-    private long timeNextFloor = 0;
-    private long timeStartMovie = 0;
-    private long timePrevStop = 0;
-
-    @Override
-    public long getTimeNextStop() {
-        return timeNextStop;
-    }
-
-    @Override
-    public void resetState() {
-        switch (curState){
-            case NONE:
-                break;
-
-            case MOVIE:
-                break;
-
-            case START:
-                break;
-
-            case STOP:
-                break;
-        }
-    }
-
-    @Override
-    public void startMovie(int toFloor) {
-        curState = STATE.START;
-        currentStateProperty.set(STATE.START.toString());
-        timeNextStop = Math.abs(currentFloor.get() - toFloor) * IStateLift.TIME_ONE_FLOOR_SEC
-            + System.currentTimeMillis() / 1000;
-
-    }
-
-    @Override
-    public void continueMovie(int toFloor) {
-        curState = STATE.START;
-        currentStateProperty.set(STATE.START.toString());
-        timeNextStop = Math.abs(currentFloor.get() - toFloor) * IStateLift.TIME_ONE_FLOOR_SEC
-            + System.currentTimeMillis() / 1000;
-    }
-
-    @Override
-    public void stopMovie() {
-        curState = STATE.STOP;
-        currentStateProperty.set(STATE.STOP.toString());
-
-        timePrevStop = timeNextStop + 2;
-        timeNextStop = 0;
-    }
 
     @Override
     public int getCurrentFloor() {
@@ -92,6 +40,11 @@ public class Lift implements IStateLift{
 
     public StringProperty currentDirectionProperty() {
         return currentDirectionProperty;
+    }
+
+    public void setCurDir(Call.DIRECTION curDir) {
+        this.curDir = curDir;
+        this.currentDirectionProperty.set(curDir.toString());
     }
 
     public STATE getCurrentState() {

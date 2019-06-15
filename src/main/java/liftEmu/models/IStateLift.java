@@ -10,14 +10,6 @@ public interface IStateLift {
     int TIME_ONE_FLOOR_SEC = 10;
     int TIME_START_STOP_SEC = 2;
 
-    long getTimeNextStop();
-
-    void resetState();
-
-    void startMovie(int toFloor);
-    void continueMovie(int toFloor);
-    void stopMovie();
-
     int getCurrentFloor();
 
     default ObservableList getListFloors() {
