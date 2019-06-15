@@ -9,21 +9,12 @@ public class OrderCalls implements IOrderCalls{
     private volatile LinkedList<Call> order = new LinkedList<>();
 
     @Override
-    public long getTimeNextStop() {
-        if (order.isEmpty()) {
-            return 0;
-        }
-
-        return 0;
-    }
-
-    @Override
     public int getNextStop() {
         if (order.isEmpty()) {
             return 0;
         }
 
-        return order.pollFirst().getFloor();
+        return order.peekFirst().getFloor();
     }
 
 
@@ -53,6 +44,11 @@ public class OrderCalls implements IOrderCalls{
         } else {
             order.add(iToInsert, call);
         }
+    }
+
+    @Override
+    public void doStop() {
+        order.removeFirst();
     }
 
     int getCurrentFloor() {

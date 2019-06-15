@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Text;
+import liftEmu.models.IStateLift;
 import liftEmu.models.Lift;
 import liftEmu.models.calls.Call;
 import liftEmu.models.calls.IOrderCalls;
@@ -36,6 +37,8 @@ public class MainController {
     private Lift lift = Lift.getInstance();
     private IOrderCalls calls = new OrderCalls();
     private static Timer timer = new Timer();
+    private static Timer timerMovie = new Timer();
+    private static Timer timerStart = new Timer();
 
     @FXML
     void initialize() {
@@ -68,7 +71,7 @@ public class MainController {
     private void doCall(Call.TYPE type, Call.DIRECTION dir, int floor) {
         calls.addCall(new Call(type, dir, floor));
         if (lift.getCurrentState() == Lift.STATE.NONE) {
-            lift.setCurrentState(Lift.STATE.MOVIE);
+            timerStart();
         }
     }
 
@@ -76,12 +79,12 @@ public class MainController {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-//                System.out.println("cur time: " + System.currentTimeMillis() / 1000);
                 textOrderStop.setText(calls.toString());
-                if (System.currentTimeMillis() / 1000 == calls.getTimeNextStop()) {
-//                    System.out.println("YYYY time:" + calls.getTimeNextStop());
-                    lift.setCurrentFloor(calls.getNextStop());
+                if (lift.getCurrentFloor() == calls.getNextStop()) {
+                    calls.doStop();
                     lift.setCurrentState(Lift.STATE.STOP);
+                    timerMovie.cancel();
+                    timerStart();
                 }
             }
         };
@@ -89,10 +92,44 @@ public class MainController {
         timer.schedule(task, 1000, 1000);
     }
 
+    private void timerStart() {
+        TimerTask taskStart = new TimerTask() {
+            @Override
+            public void run() {
+                if (calls.getNextStop() != 0) {
+                    lift.setCurrentState(Lift.STATE.START);
+                    timerMovie();
+                } else {
+                    lift.setCurrentState(Lift.STATE.NONE);
+                }
+            }
+        };
+        timerStart.schedule(taskStart, IStateLift.TIME_START_STOP_SEC * 1000);
+    }
+
+    private void timerMovie() {
+        TimerTask task= new TimerTask() {
+            @Override
+            public void run() {
+                lift.setCurrentState(Lift.STATE.MOVIE);
+                int newFloor = lift.getCurrentFloor();
+                if (lift.getCurDir() == Call.DIRECTION.UP) {
+                    newFloor++;
+                } else {
+                    newFloor--;
+                }
+                lift.setCurrentFloor(newFloor);
+            }
+        };
+
+        timerMovie.schedule(task, IStateLift.TIME_START_STOP_SEC * 1000, IStateLift.TIME_ONE_FLOOR_SEC * 1000);
+    }
 
 
     public static void cancelTimer(){
         timer.cancel();
+        timerMovie.cancel();
+        timerStart.cancel();
     }
 
 
