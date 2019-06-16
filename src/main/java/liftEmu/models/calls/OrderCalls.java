@@ -17,7 +17,12 @@ public class OrderCalls implements IOrderCalls{
         return order.peekFirst().getFloor();
     }
 
-
+    /**
+     *
+     * @param call
+     * call is inserted in list of calls in right order: list`s sort depends on type of call and
+     * target\current floor
+     */
     @Override
     public void addCall(Call call) {
         int iToInsert = 0;

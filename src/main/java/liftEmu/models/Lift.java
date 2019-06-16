@@ -1,23 +1,17 @@
 package liftEmu.models;
 
 import javafx.beans.property.*;
-import liftEmu.models.calls.Call;
 
 public class Lift implements IStateLift{
 
-    public enum STATE {
-        MOVIE,
-        START,
-        STOP,
-        NONE
-    }
-
     private IntegerProperty currentFloor = new SimpleIntegerProperty(1);
 
-    private Call.DIRECTION curDir = Call.DIRECTION.UP;
+    private DIRECTION curDir = DIRECTION.UP;
+    //field to link with JavaFX text
     private StringProperty currentDirectionProperty = new SimpleStringProperty(curDir.toString());
 
     private STATE curState = STATE.NONE;
+    //field to link with JavaFX text
     private StringProperty currentStateProperty = new SimpleStringProperty(curState.toString());
 
 
@@ -30,11 +24,13 @@ public class Lift implements IStateLift{
         return currentFloor;
     }
 
+    @Override
     public void setCurrentFloor(int currentFloor) {
         this.currentFloor.set(currentFloor);
     }
 
-    public Call.DIRECTION getCurDir() {
+    @Override
+    public DIRECTION getCurDir() {
         return curDir;
     }
 
@@ -42,11 +38,13 @@ public class Lift implements IStateLift{
         return currentDirectionProperty;
     }
 
-    public void setCurDir(Call.DIRECTION curDir) {
+    @Override
+    public void setCurDir(DIRECTION curDir) {
         this.curDir = curDir;
         this.currentDirectionProperty.set(curDir.toString());
     }
 
+    @Override
     public STATE getCurrentState() {
         return curState;
     }
@@ -55,6 +53,7 @@ public class Lift implements IStateLift{
         return currentStateProperty;
     }
 
+    @Override
     public void setCurrentState(STATE currentState) {
         this.currentStateProperty.set(currentState.toString());
         this.curState = currentState;

@@ -1,18 +1,15 @@
 package liftEmu.models.calls;
 
-public class Call {
-    public enum DIRECTION {
-        UP,
-        DOWN
-    }
+import liftEmu.models.IStateLift;
 
+public class Call {
     public enum TYPE {
         INNER,
         OUTER
     }
 
     private TYPE type;
-    private DIRECTION dir;
+    private IStateLift.DIRECTION dir;
 
     private int floor;
 
@@ -24,11 +21,11 @@ public class Call {
         this.floor = floor;
     }
 
-    public void setDir(DIRECTION dir) {
+    public void setDir(IStateLift.DIRECTION dir) {
         this.dir = dir;
     }
 
-    public DIRECTION getDir() {
+    public IStateLift.DIRECTION getDir() {
         return dir;
     }
 
@@ -40,7 +37,7 @@ public class Call {
         this.type = type;
     }
 
-    public Call(TYPE type, DIRECTION dir, int floor) {
+    public Call(TYPE type, IStateLift.DIRECTION dir, int floor) {
         this.type = type;
         this.dir = dir;
         this.floor = floor;

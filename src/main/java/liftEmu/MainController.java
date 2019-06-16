@@ -34,7 +34,7 @@ public class MainController {
     @FXML
     public Text textCurState;
 
-    private Lift lift = Lift.getInstance();
+    private IStateLift lift = Lift.getInstance();
     private IOrderCalls calls = new OrderCalls();
     private static Timer timer = new Timer();
     private static Timer timerMovie = new Timer();
@@ -51,40 +51,52 @@ public class MainController {
 
         btnOuterCall.setOnAction(event -> {
             doCall(Call.TYPE.OUTER,
-            Call.DIRECTION.valueOf(outerCallDir.getValue().toString()),
+            IStateLift.DIRECTION.valueOf(outerCallDir.getValue().toString()),
                 Integer.valueOf(outerCallFloor.getValue().toString()));
         });
 
         btnInnerCall.setOnAction(event -> {
             int selectedFloor = Integer.valueOf(innerCallFloor.getValue().toString());
 
-            Call.DIRECTION dir = lift.getCurrentFloor() - selectedFloor > 0 ?
-                Call.DIRECTION.DOWN : Call.DIRECTION.UP;
+            IStateLift.DIRECTION dir = lift.getCurrentFloor() - selectedFloor > 0 ?
+                IStateLift.DIRECTION.DOWN : IStateLift.DIRECTION.UP;
 
             doCall(Call.TYPE.INNER, dir, selectedFloor);
         });
 
-        lift.currentFloorProperty().addListener((event) ->
+        Lift.getInstance().currentFloorProperty().addListener((event) ->
             textCurFloor.setText(String.valueOf(lift.getCurrentFloor())));
-        textCurDir.textProperty().bind(lift.currentDirectionProperty());
-        textCurState.textProperty().bind(lift.currentStateProperty());
+        textCurDir.textProperty().bind(Lift.getInstance().currentDirectionProperty());
+        textCurState.textProperty().bind(Lift.getInstance().currentStateProperty());
 
         setTimer();
     }
 
-    private void doCall(Call.TYPE type, Call.DIRECTION dir, int floor) {
+    /**
+     *
+     * @param type - outer\inner
+     * @param dir - up\down
+     * @param floor - target floor
+     *
+     * creates call, adds it to lift`s order and change current lift`s direction
+     * create timer for start movie
+     */
+    private void doCall(Call.TYPE type, IStateLift.DIRECTION dir, int floor) {
         calls.addCall(new Call(type, dir, floor));
-        if (lift.getCurrentState() == Lift.STATE.NONE) {
+        if (lift.getCurrentState() == IStateLift.STATE.NONE) {
             timerStart();
 
             if (floor > lift.getCurrentFloor()) {
-                lift.setCurDir(Call.DIRECTION.UP);
+                lift.setCurDir(IStateLift.DIRECTION.UP);
             } else {
-                lift.setCurDir(Call.DIRECTION.DOWN);
+                lift.setCurDir(IStateLift.DIRECTION.DOWN);
             }
         }
     }
 
+    /**
+     * timer works every sec and checks current data as floor and target floor
+     */
     private void setTimer() {
         TimerTask task = new TimerTask() {
             @Override
@@ -94,12 +106,12 @@ public class MainController {
                     calls.doStop();
                     if (calls.getNextStop() != 0) {
                         if (calls.getNextStop() > lift.getCurrentFloor()) {
-                            lift.setCurDir(Call.DIRECTION.UP);
+                            lift.setCurDir(IStateLift.DIRECTION.UP);
                         } else {
-                            lift.setCurDir(Call.DIRECTION.DOWN);
+                            lift.setCurDir(IStateLift.DIRECTION.DOWN);
                         }
                     }
-                    lift.setCurrentState(Lift.STATE.STOP);
+                    lift.setCurrentState(IStateLift.STATE.STOP);
                     taskFloor.cancel();
                     timerStart();
                 }
@@ -109,15 +121,18 @@ public class MainController {
         timer.schedule(task, 1000, 1000);
     }
 
+    /**
+     * timer sets start state of lift and set timer for movie
+     */
     private void timerStart() {
         taskStart = new TimerTask() {
             @Override
             public void run() {
                 if (calls.getNextStop() != 0) {
-                    lift.setCurrentState(Lift.STATE.START);
+                    lift.setCurrentState(IStateLift.STATE.START);
                     timerMovie();
                 } else {
-                    lift.setCurrentState(Lift.STATE.NONE);
+                    lift.setCurrentState(IStateLift.STATE.NONE);
                 }
             }
         };
@@ -125,6 +140,9 @@ public class MainController {
         timerStart.schedule(taskStart, IStateLift.TIME_START_STOP_SEC * 1000);
     }
 
+    /**
+     * timer sets movie state of lift and every 10 sec check current floor
+     */
     private void timerMovie() {
         TimerTask task = new TimerTask() {
             @Override
@@ -137,7 +155,7 @@ public class MainController {
             @Override
             public void run() {
                 int newFloor = lift.getCurrentFloor();
-                if (lift.getCurDir() == Call.DIRECTION.UP) {
+                if (lift.getCurDir() == IStateLift.DIRECTION.UP) {
                     newFloor++;
                 } else {
                     newFloor--;
