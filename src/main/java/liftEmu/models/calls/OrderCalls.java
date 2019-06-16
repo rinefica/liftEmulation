@@ -1,5 +1,6 @@
 package liftEmu.models.calls;
 
+import liftEmu.models.IStateLift;
 import liftEmu.models.Lift;
 
 import java.util.LinkedList;
@@ -29,13 +30,14 @@ public class OrderCalls implements IOrderCalls{
         if (!order.isEmpty()) {
 
             if (call.getType() == Call.TYPE.OUTER) {
-                Call.DIRECTION dir = call.getDir() == Call.DIRECTION.UP ? Call.DIRECTION.DOWN : Call.DIRECTION.UP;
+                IStateLift.DIRECTION dir = call.getDir() == IStateLift.DIRECTION.UP ?
+                    IStateLift.DIRECTION.DOWN : IStateLift.DIRECTION.UP;
                 while((iToInsert < order.size()) && (order.get(iToInsert).getDir() == dir)) {
                     iToInsert++;
                 }
             }
 
-            Call.DIRECTION curDir = call.getDir();
+            IStateLift.DIRECTION curDir = call.getDir();
             int distance = Math.abs(getCurrentFloor() - call.getFloor());
 
             while ((iToInsert < order.size()) && (order.get(iToInsert).getDir() == curDir) &&
